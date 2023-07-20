@@ -10,12 +10,12 @@ import "./Styles/Style.css"
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <Background>
-      <ThemeProvider>
-        <SocketProvider>
+    <SocketProvider>
+      <Background>
+        <ThemeProvider>
           <App />
-        </SocketProvider>
-      </ThemeProvider>
-    </Background>
+        </ThemeProvider>
+      </Background>
+    </SocketProvider>
   </React.StrictMode>,
 )

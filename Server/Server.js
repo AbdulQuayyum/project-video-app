@@ -20,14 +20,14 @@ io.on("connection", (socket) => {
     socket.emit("me", socket.id);
 
     socket.on("disconnect", () => {
-        socket.broadcast.emit("callEnded")
+        socket.broadcast.emit("CallEnded")
     });
 
-    socket.on("callUser", ({ userToCall, signalData, from, name }) => {
-        io.to(userToCall).emit("callUser", { signal: signalData, from, name });
+    socket.on("CallUser", ({ userToCall, signalData, from, name }) => {
+        io.to(userToCall).emit("CallUser", { signal: signalData, from, name });
     });
 
-    socket.on("answerCall", (data) => {
+    socket.on("AnswerCall", (data) => {
         io.to(data.to).emit("callAccepted", data.signal)
     });
 });

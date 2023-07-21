@@ -9,7 +9,7 @@ const Wrapper = ({ children }) => {
     const [idToCall, setIdToCall] = useState('');
 
     return (
-        <div className='flex justify-center mx-auto'>
+        <div className='flex flex-col gap-6 justify-center mx-auto'>
             <div className='flex flex-col items-center justify-center'>
                 <div className='flex flex-col' >
                     <div className='my-4'>

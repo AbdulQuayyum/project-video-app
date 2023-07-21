@@ -1,4 +1,5 @@
 import React, { useState, useContext } from 'react';
+import { toast } from 'react-hot-toast';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { LuCopy, LuPhone, LuPhoneOff } from "react-icons/lu"
 
@@ -7,6 +8,15 @@ import { SocketContext } from '../Contexts/SocketContext'
 const Wrapper = ({ children }) => {
     const { me, callAccepted, name, setName, callEnded, leaveCall, callUser } = useContext(SocketContext);
     const [idToCall, setIdToCall] = useState('');
+
+    const HandleCalling = () => {
+        if (!name) {
+            toast.error("Add a name before calling...")
+            console.log("Add a name before calling...")
+        } else {
+            callUser(idToCall)
+        }
+    }
 
     return (
         <div className='flex flex-col gap-6 justify-center mx-auto'>
@@ -55,7 +65,7 @@ const Wrapper = ({ children }) => {
                     ) : (
                         <div className='flex justify-end'>
                             <button
-                                onClick={() => callUser(idToCall)}
+                                onClick={HandleCalling}
                                 className='flex items-center gap-2 px-8 py-3 text-sm text-white transition-all bg-black border border-black rounded-full hover:bg-white hover:text-black dark:bg-white dark:text-black dark:hover:bg-black dark:hover:text-white'>
                                 <LuPhone />
                                 Call

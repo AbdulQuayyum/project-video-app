@@ -5,7 +5,7 @@ import { LuCopy, LuPhone, LuPhoneOff } from "react-icons/lu"
 import { SocketContext } from '../Contexts/SocketContext'
 
 const Wrapper = ({ children }) => {
-    const { me, callAccepted, name, setName, CallEnded, LeaveCall, CallUser } = useContext(SocketContext);
+    const { me, callAccepted, name, setName, callEnded, leaveCall, callUser } = useContext(SocketContext);
     const [idToCall, setIdToCall] = useState('');
 
     return (
@@ -43,10 +43,10 @@ const Wrapper = ({ children }) => {
                             className="w-full p-2 text-lg transition-all duration-500 border-2 border-gray-200 outline-none rounded-xl dark:bg-transparent dark:border-2 dark:rounded-lg dark:border-white"
                         />
                     </div>
-                    {callAccepted && !CallEnded ? (
+                    {callAccepted && !callEnded ? (
                         <div className='flex justify-end'>
                             <button
-                                onClick={LeaveCall}
+                                onClick={leaveCall}
                                 className='flex items-center gap-2 px-8 py-3 text-sm text-white transition-all bg-black border border-black rounded-full hover:bg-white hover:text-black dark:bg-white dark:text-black dark:hover:bg-black dark:hover:text-white'>
                                 <LuPhoneOff />
                                 Hang Up
@@ -55,7 +55,7 @@ const Wrapper = ({ children }) => {
                     ) : (
                         <div className='flex justify-end'>
                             <button
-                                onClick={() => CallUser(idToCall)}
+                                onClick={() => callUser(idToCall)}
                                 className='flex items-center gap-2 px-8 py-3 text-sm text-white transition-all bg-black border border-black rounded-full hover:bg-white hover:text-black dark:bg-white dark:text-black dark:hover:bg-black dark:hover:text-white'>
                                 <LuPhone />
                                 Call

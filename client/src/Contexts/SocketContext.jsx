@@ -7,7 +7,7 @@ const socket = io(`${import.meta.env.VITE_SERVER_URL}`)
 
 const SocketProvider = ({ children }) => {
     const [callAccepted, setCallAccepted] = useState(false);
-    const [CallEnded, setCallEnded] = useState(false);
+    const [callEnded, setCallEnded] = useState(false);
     const [stream, setStream] = useState();
     const [name, setName] = useState('');
     const [call, setCall] = useState({});
@@ -22,11 +22,9 @@ const SocketProvider = ({ children }) => {
             .then((currentStream) => {
                 setStream(currentStream);
 
-                if (MyVideo.current) 
-                {
+                if (MyVideo.current) {
                     MyVideo.current.srcObject = currentStream;
                 }
-            
             });
 
         socket.on('me', (id) => setMe(id));
@@ -34,19 +32,19 @@ const SocketProvider = ({ children }) => {
         socket.on('callUser', ({ from, name: callerName, signal }) => {
             setCall({ isReceivingCall: true, from, name: callerName, signal });
         });
-    }, [])
+    }, [MyVideo]);
 
-    const AnswerCall = () => {
+    const answerCall = () => {
         setCallAccepted(true);
 
-        const peer = new Peer({ initiator: false, trickle: false, stream });
+        const peer = new Peer({ initiator: false, trickle: false, stream: stream });
 
         peer.on('signal', (data) => {
-            socket.emit('AnswerCall', { signal: data, to: call.from });
+            socket.emit('answerCall', { signal: data, to: call.from });
         });
 
         peer.on('stream', (currentStream) => {
-            UserVideo.current.srcObject = currentStream.streams[0]
+            UserVideo.current.srcObject = currentStream;
         });
 
         peer.signal(call.signal);
@@ -54,11 +52,11 @@ const SocketProvider = ({ children }) => {
         ConnectionRef.current = peer;
     };
 
-    const CallUser = () => {
-        const peer = new Peer({ initiator: true, trickle: false, stream });
+    const callUser = (id) => {
+        const peer = new Peer({ initiator: true, trickle: false, stream: stream });
 
         peer.on('signal', (data) => {
-            socket.emit('CallUser', { userToCall: id, signalData: data, from: me, name });
+            socket.emit('callUser', { userToCall: id, signalData: data, from: me, name: name });
         });
 
         peer.on('stream', (currentStream) => {
@@ -72,9 +70,9 @@ const SocketProvider = ({ children }) => {
         });
 
         ConnectionRef.current = peer;
-    }
+    };
 
-    const LeaveCall = () => {
+    const leaveCall = () => {
         setCallEnded(true);
 
         ConnectionRef.current.destroy();
@@ -84,7 +82,20 @@ const SocketProvider = ({ children }) => {
 
     return (
         <SocketContext.Provider
-            value={{ call, callAccepted, MyVideo, UserVideo, stream, name, setName, CallEnded, me, CallUser, LeaveCall, AnswerCall }}>
+            value={{
+                call,
+                callAccepted,
+                MyVideo,
+                UserVideo,
+                stream,
+                name,
+                setName,
+                callEnded,
+                me,
+                callUser,
+                leaveCall,
+                answerCall
+            }}>
             {children}
         </SocketContext.Provider>
     )

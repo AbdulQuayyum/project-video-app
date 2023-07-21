@@ -1,8 +1,13 @@
 const express = require('express')
-const app = express()
-const server = require("http").createServer(app);
+const http = require("http");
 const cors = require("cors");
+// const server = require("http").createServer(app);
 
+const app = express()
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+const server = http.createServer(app);
 const port = 8080
 
 const io = require("socket.io")(server, {
@@ -12,22 +17,20 @@ const io = require("socket.io")(server, {
     }
 });
 
-app.use(cors());
-
 app.get('/', (req, res) => res.send('Heyy There!'))
 
 io.on("connection", (socket) => {
     socket.emit("me", socket.id);
 
     socket.on("disconnect", () => {
-        socket.broadcast.emit("CallEnded")
+        socket.broadcast.emit("callEnded")
     });
 
-    socket.on("CallUser", ({ userToCall, signalData, from, name }) => {
-        io.to(userToCall).emit("CallUser", { signal: signalData, from, name });
+    socket.on("callUser", ({ userToCall, signalData, from, name }) => {
+        io.to(userToCall).emit("callUser", { signal: signalData, from: from, name: name });
     });
 
-    socket.on("AnswerCall", (data) => {
+    socket.on("answerCall", (data) => {
         io.to(data.to).emit("callAccepted", data.signal)
     });
 });
